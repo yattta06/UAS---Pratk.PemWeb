@@ -11,7 +11,6 @@ export default function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-black text-white">
       <div className="container mx-auto px-4 py-16">
-        {/* Footer Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">About We</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
@@ -20,7 +19,6 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Contact Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-12">
           {socialLinks.map((link) => (
             <a
@@ -39,7 +37,6 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Copyright */}
         <div className="text-center pt-8 border-t border-gray-800">
           <p className="text-gray-400">
             © {new Date().getFullYear()} BOOKSHOP ED. All rights reserved.

@@ -113,7 +113,6 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
         <div className="flex items-left justify-between mb-12">
           <div>
             <h2 className="text-lg md:text-5xl font-bold text-gray-900 mb-2">
@@ -132,13 +131,11 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <TambahBukuCard onClick={() => setShowAddForm(true)} />
 
-          {/* Buku yang Ada */}
           {allBooks.map((book) => (
             <div
               key={book.id}
               className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100"
             >
-              {/* Book Cover */}
               <div
                 className={`relative h-48 overflow-hidden ${dragStates[book.id] ? 'border-2 border-dashed border-blue-500' : ''}`}
                 onDragOver={(e) => handleDragOver(e, book.id)}
@@ -152,32 +149,27 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
                 }}
               >
                 {!bookImages[book.id] && (
-                  <div className={`absolute inset-0 bg-gradient-to-br ${book.color || 'from-gray-400 to-gray-600'}`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${book.color || 'from-gray-400 to-gray-600'}`}></div>  // Fallback gradient jika color kosong
                 )}
-                
-                {/* Volume Badge */}
+
                 {book.volume && (
                   <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-1 rounded-full text-sm font-bold">
                     {book.volume}
                   </div>
                 )}
                 
-                {/* Book Icon */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <svg className="w-20 h-20 text-white/30" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 </div>
                 
-                {/* Title Overlay */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                   <h3 className="text-xl font-bold text-white">{book.title}</h3>
                 </div>
               </div>
 
-              {/* Book Info */}
               <div className="p-6">
-                {/* Author and Category */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-sm text-gray-500">{book.author}</p>
@@ -191,23 +183,21 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
                   </div>
                 </div>
 
-                {/* Description */}
                 <p className="text-gray-600 text-sm mb-6 line-clamp-3">
                   {book.description}
                 </p>
 
-                {/* Action Buttons */}
                 <div className="flex justify-between items-center">
                   <button className="px-4 py-2 border-2 border-gray-900 text-gray-900 rounded-lg font-semibold hover:bg-gray-900 hover:text-white transition-all duration-300 text-sm">
                     Read Preview
                   </button>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-gray-900">Rp {book.price.toLocaleString('id-ID')}</p>
+                    <p className="text-2xl font-bold text-gray-900">Rp {book.price.toLocaleString('id-ID')}</p>  {/* Ubah ke Rupiah */}
+                    <p className="text-xs text-gray-500">Paperback</p>
                   </div>
                 </div>
               </div>
 
-              {/* Hover Effect */}
               <div className="absolute inset-0 border-2 border-transparent group-hover:border-purple-400 rounded-2xl pointer-events-none transition-all duration-300"></div>
             </div>
           ))}
@@ -251,6 +241,7 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
                 value={newBook.price}
                 onChange={(e) => setNewBook({ ...newBook, price: parseFloat(e.target.value) || 1 })}
                 className="w-full p-2 border rounded mb-2"
+                style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
                 min="1"
               />
               <input

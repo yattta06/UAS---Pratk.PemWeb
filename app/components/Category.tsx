@@ -32,7 +32,6 @@ export default function TopCategory({ books = [] }: TopCategoryProps) {
   const categories: Category[] = [];
   const categoryCount: { [key: string]: number } = {};
 
-  // Hitung jumlah buku per kategori
   books.forEach((book) => {
     if (book.category) {
       categoryCount[book.category] = (categoryCount[book.category] || 0) + 1;
@@ -51,14 +50,13 @@ export default function TopCategory({ books = [] }: TopCategoryProps) {
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+
         <div className="text-left mb-12">
           <h2 className="text-lg md:text-2xl font-bold text-gray-900 mb-4">
             Our Top Category
           </h2>
         </div>
 
-        {/* Categories Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {categories.length > 0 ? (
             categories.map((category) => (
@@ -66,10 +64,8 @@ export default function TopCategory({ books = [] }: TopCategoryProps) {
                 key={category.id}
                 className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border border-gray-100"
               >
-                {/* Background Gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-5 rounded-2xl group-hover:opacity-10 transition-opacity`}></div>
                 
-                {/* Category Content */}
                 <div className="relative">
                   <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                     <span className="text-2xl font-bold text-white">
@@ -90,7 +86,6 @@ export default function TopCategory({ books = [] }: TopCategoryProps) {
                   </div>
                 </div>
 
-                {/* Hover Effect */}
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </div>
             ))
@@ -99,7 +94,6 @@ export default function TopCategory({ books = [] }: TopCategoryProps) {
           )}
         </div>
 
-        {/* View All Button */}
         <div className="text-center mt-12">
           <button className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-gray-900 to-black text-white rounded-xl font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105">
             View All Categories

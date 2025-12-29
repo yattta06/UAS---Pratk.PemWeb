@@ -1,5 +1,3 @@
-// app/components/Navbar.tsx
-
 export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
