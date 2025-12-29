@@ -10,8 +10,10 @@ interface Book {
   title: string;
   author: string;
   rating: number;
+  category?: string;
   description: string;
   color: string;
+  price: number;
 }
 
 interface BookSectionProps {
@@ -21,13 +23,66 @@ interface BookSectionProps {
 export default function BookSection({ books = defaultBooks }: BookSectionProps) {
   const [allBooks, setAllBooks] = useState<Book[]>(books);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newBook, setNewBook] = useState<Partial<Book>>({
+  const [newBook, setNewBook] = useState<Partial<Book & { image?: string }>>({
     title: '',
     author: '',
-    rating: 4.5,
+    rating: 0,
+    category: '',
     description: '',
-    color: 'from-blue-500 to-cyan-400',
+    color: '',
+    price: 1,
+    image: undefined,
   });
+
+  const [bookImages, setBookImages] = useState<{ [key: number]: string }>({});
+  const [dragStates, setDragStates] = useState<{ [key: number]: boolean }>({});
+
+  const handleDragOver = (e: React.DragEvent, bookId: number) => {
+    e.preventDefault();
+    setDragStates(prev => ({ ...prev, [bookId]: true }));
+  };
+
+  const handleDragEnter = (e: React.DragEvent, bookId: number) => {
+    e.preventDefault();
+    setDragStates(prev => ({ ...prev, [bookId]: true }));
+  };
+
+  const handleDragLeave = (e: React.DragEvent, bookId: number) => {
+    e.preventDefault();
+    setDragStates(prev => ({ ...prev, [bookId]: false }));
+  };
+
+  const handleDrop = (e: React.DragEvent, bookId: number) => {
+    e.preventDefault();
+    setDragStates(prev => ({ ...prev, [bookId]: false }));
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setBookImages(prev => ({ ...prev, [bookId]: reader.result as string }));
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please drop a valid image file.');
+      }
+    }
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setNewBook({ ...newBook, image: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please select a valid image file.');
+    }
+  };
 
   const addBook = async () => {
     if (!newBook.title || !newBook.author) {
@@ -37,16 +92,21 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
 
     const bookToAdd: Book = {
       id: Date.now(),
-      volume: newBook.volume || undefined,
+      volume: newBook.volume || '',
       title: newBook.title,
       author: newBook.author,
-      rating: newBook.rating || 4.5,
+      rating: newBook.rating || 0,
+      category: newBook.category || '',
       description: newBook.description || '',
-      color: newBook.color || 'from-blue-500 to-cyan-400',
+      color: newBook.color || '',
+      price: newBook.price || 1,
     };
 
     setAllBooks([...allBooks, bookToAdd]);
-    setNewBook({ title: '', author: '', rating: 4.5, description: '', color: 'from-blue-500 to-cyan-400' });
+    if (newBook.image) {
+      setBookImages(prev => ({ ...prev, [bookToAdd.id]: newBook.image! }));
+    }
+    setNewBook({ title: '', author: '', rating: 0, category: '', description: '', color: '', price: 1, image: undefined });
     setShowAddForm(false);
   };
 
@@ -79,8 +139,21 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
               className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100"
             >
               {/* Book Cover */}
-              <div className="relative h-48 overflow-hidden">
-                <div className={`absolute inset-0 bg-gradient-to-br ${book.color}`}></div>
+              <div
+                className={`relative h-48 overflow-hidden ${dragStates[book.id] ? 'border-2 border-dashed border-blue-500' : ''}`}
+                onDragOver={(e) => handleDragOver(e, book.id)}
+                onDragEnter={(e) => handleDragEnter(e, book.id)}
+                onDragLeave={(e) => handleDragLeave(e, book.id)}
+                onDrop={(e) => handleDrop(e, book.id)}
+                style={{
+                  backgroundImage: bookImages[book.id] ? `url(${bookImages[book.id]})` : `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
+                {!bookImages[book.id] && (
+                  <div className={`absolute inset-0 bg-gradient-to-br ${book.color || 'from-gray-400 to-gray-600'}`}></div>
+                )}
                 
                 {/* Volume Badge */}
                 {book.volume && (
@@ -104,9 +177,12 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
 
               {/* Book Info */}
               <div className="p-6">
-                {/* Author */}
+                {/* Author and Category */}
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm text-gray-500">{book.author}</p>
+                  <div>
+                    <p className="text-sm text-gray-500">{book.author}</p>
+                    {book.category && <p className="text-xs text-gray-400">{book.category}</p>}  {/* Tambahan: Tampilkan kategori */}
+                  </div>
                   <div className="flex items-center">
                     <svg className="w-5 h-5 text-yellow-400 fill-yellow-400" viewBox="0 0 24 24">
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -126,8 +202,7 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
                     Read Preview
                   </button>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-gray-900">$29.99</p>
-                    <p className="text-xs text-gray-500">Paperback</p>
+                    <p className="text-2xl font-bold text-gray-900">Rp {book.price.toLocaleString('id-ID')}</p>
                   </div>
                 </div>
               </div>
@@ -158,10 +233,10 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
                 className="w-full p-2 border rounded mb-2"
               />
               <input
-                type="number"
-                placeholder="Rating (e.g., 4.5)"
-                value={newBook.rating}
-                onChange={(e) => setNewBook({ ...newBook, rating: parseFloat(e.target.value) })}
+                type="text"
+                placeholder="Category (e.g., Fiction)"
+                value={newBook.category}
+                onChange={(e) => setNewBook({ ...newBook, category: e.target.value })}
                 className="w-full p-2 border rounded mb-2"
               />
               <textarea
@@ -171,10 +246,17 @@ export default function BookSection({ books = defaultBooks }: BookSectionProps) 
                 className="w-full p-2 border rounded mb-2"
               />
               <input
-                type="text"
-                placeholder="Color (e.g., from-blue-500 to-cyan-400)"
-                value={newBook.color}
-                onChange={(e) => setNewBook({ ...newBook, color: e.target.value })}
+                type="number"
+                placeholder="Price (e.g., 10000)"
+                value={newBook.price}
+                onChange={(e) => setNewBook({ ...newBook, price: parseFloat(e.target.value) || 1 })}
+                className="w-full p-2 border rounded mb-2"
+                min="1"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
                 className="w-full p-2 border rounded mb-4"
               />
               <div className="flex justify-end gap-2">
