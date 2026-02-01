@@ -33,7 +33,7 @@
   width: 50%;
   height: 100%;
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-              url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+              url('/public/LoginPage.JPEG');
   background-size: cover;
   background-position: center;
   color: white;
