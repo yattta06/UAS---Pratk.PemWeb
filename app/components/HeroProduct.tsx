@@ -26,7 +26,7 @@ export default function HeroProduct() {
     <section className={styles.hero}>
       <div className={styles.imageWrapper}>
        <Image
-          src="/koko_guntur.JPEG"
+          src="/koko_guntur.jpeg"
           alt="Koko Guntur The Legend of UNU"
           width={500}
           height={650}
