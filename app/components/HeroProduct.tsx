@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import styles from "./Module/HeroProduct.module.css";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
@@ -24,9 +25,13 @@ export default function HeroProduct() {
   return (
     <section className={styles.hero}>
       <div className={styles.imageWrapper}>
-        <img
+       <Image
           src="/koko_guntur.JPEG"
           alt="Koko Guntur The Legend of UNU"
+          width={500}
+          height={650}
+          priority={true}
+          className={styles.image}
         />
       </div>
 
